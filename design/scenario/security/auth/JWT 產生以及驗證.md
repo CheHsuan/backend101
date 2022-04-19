@@ -42,14 +42,14 @@ signature = Base64UrlEncode(Sign(header.payload, your-secret))
 
 ``` mermaid
 sequenceDiagram
-User->Auth: ask for JWT token
-Auth->MySQL: verify user and password
+User->>Auth: ask for JWT token
+Auth->>MySQL: verify user and password
 Note over Auth: generate JWT token with secret key
-Auth-->User: JWT token
-User->Service: query with JWT token
-Service->Auth: verify token
-Auth-->Service: verified
-Service-->User: OK
+Auth-->>User: JWT token
+User->>Service: query with JWT token
+Service->>Auth: verify token
+Auth-->>Service: verified
+Service-->>User: OK
 ```
 
 可以看到這個流程當中，都是由Auth服務進行token分發和驗證。
@@ -69,19 +69,19 @@ Service-->User: OK
 
 ``` mermaid
 sequenceDiagram
-User->Auth: ask for JWT token
-Auth->MySQL: verify user and password
+User->>Auth: ask for JWT token
+Auth->>MySQL: verify user and password
 Note over Auth: generate JWT token with private key
-Auth-->User: JWT token
-User->Service: query with JWT token
-Service->Auth: query JKWS API
-Auth-->Service: public key
+Auth-->>User: JWT token
+User->>Service: query with JWT token
+Service->>Auth: query JKWS API
+Auth-->>Service: public key
 Note over Service: verify JWT token with public key
 Note over Service: keep th public key in local cache
-Service-->User: OK
-User->Service: query agagin with JWT token
+Service-->>User: OK
+User->>Service: query agagin with JWT token
 Note over Service: verify JWT token with public key from cache
-Service-->User: OK
+Service-->>User: OK
 ```
 
 在這個流程當中，由Auth充當token生成方，Service為驗證方。
