@@ -40,7 +40,8 @@ signature = Base64UrlEncode(Sign(header.payload, your-secret))
 
 使用同一把密鑰簽署以及驗證jwt token，因此auth驗證流程如下。
 
-```sequence
+``` mermaid
+sequenceDiagram
 User->Auth: ask for JWT token
 Auth->MySQL: verify user and password
 Note over Auth: generate JWT token with secret key
@@ -66,7 +67,8 @@ Service-->User: OK
 
 使用私鑰進行jwt token簽署，使用公鑰進行驗證。私鑰必須自行保留，公鑰可以公開出去，由其他方進行驗證。因此除了上述的流程外，我們也可以如下設計。
 
-```sequence
+``` mermaid
+sequenceDiagram
 User->Auth: ask for JWT token
 Auth->MySQL: verify user and password
 Note over Auth: generate JWT token with private key
