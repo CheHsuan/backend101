@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "grpc-http-server/pb/phonebook";
+
+import "google/api/field_behavior.proto";
+import "common/error.proto";
+
+package phonebook;
+
+message CreatePhoneRecordRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+  string phone = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreatePhoneRecordResponse {
+  common.Status status = 1 [json_name = "status"];
+}
+
+message QueryPhoneRecordRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message QueryPhoneRecordResponse {
+  common.Status status = 1 [json_name = "status"];
+  string name = 2;
+  string phone = 3;
+}

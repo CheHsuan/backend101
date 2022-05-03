@@ -1,0 +1,205 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "phonebook-service",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "Phonebook"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/phone-record": {
+      "get": {
+        "summary": "Query a phone record",
+        "description": "query a phone record",
+        "operationId": "Phonebook_QueryPhoneRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/phonebookQueryPhoneRecordResponse"
+            }
+          },
+          "400": {
+            "description": "Returned when the request body is invalid.",
+            "schema": {
+              "$ref": "#/definitions/commonErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/commonErrorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "phonebook"
+        ]
+      },
+      "post": {
+        "summary": "Create a phone record",
+        "description": "create a phone record",
+        "operationId": "Phonebook_CreatePhoneRecord",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/phonebookCreatePhoneRecordResponse"
+            }
+          },
+          "400": {
+            "description": "Returned when the request body is invalid.",
+            "schema": {
+              "$ref": "#/definitions/commonErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/commonErrorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/googlerpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/phonebookCreatePhoneRecordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "phonebook"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "commonErrorResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/commonStatus"
+        }
+      }
+    },
+    "commonStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "phonebookCreatePhoneRecordRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": [
+            "name"
+          ]
+        },
+        "phone": {
+          "type": "string",
+          "required": [
+            "phone"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "phone"
+      ]
+    },
+    "phonebookCreatePhoneRecordResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/commonStatus"
+        }
+      }
+    },
+    "phonebookQueryPhoneRecordResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/commonStatus"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    }
+  }
+}

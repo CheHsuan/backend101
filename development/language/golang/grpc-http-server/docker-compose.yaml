@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  swagger:
+    image: swaggerapi/swagger-ui
+    depends_on:
+      - server
+    ports:
+      - 80:8080
+    environment:
+      - API_URL= http://127.0.0.1:8080/openapi/phonebook/service.swagger.json
+
+  server:
+    build:
+      context: ./server
+    ports:
+      - 8080:8080

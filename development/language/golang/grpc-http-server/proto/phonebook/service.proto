@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+option go_package = "grpc-http-server/pb/phonebook";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "phonebook/phonebook.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "phonebook-service";
+    version: "1.0";
+  };
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+  responses: {
+    key: "500";
+    value: {
+      description: "Server error";
+      schema: {
+        json_schema: {
+          ref: ".common.ErrorResponse";
+        }
+      }
+    }
+  }
+  responses: {
+    key: "400";
+    value: {
+      description: "Returned when the request body is invalid.";
+      schema: {
+        json_schema: {
+          ref: ".common.ErrorResponse";
+        }
+      }
+    }
+  }
+};
+
+package phonebook;
+
+service Phonebook {
+  rpc CreatePhoneRecord (CreatePhoneRecordRequest) returns (CreatePhoneRecordResponse) {
+    option (google.api.http) = {
+      post: "/v1/phone-record"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Create a phone record";
+      description: "create a phone record";
+      tags: "phonebook";
+    };
+  }
+
+  rpc QueryPhoneRecord (QueryPhoneRecordRequest) returns (QueryPhoneRecordResponse) {
+    option (google.api.http) = {
+      get: "/v1/phone-record"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Query a phone record";
+      description: "query a phone record";
+      tags: "phonebook";
+    };
+  }
+}

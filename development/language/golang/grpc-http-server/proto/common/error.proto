@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "grpc-http-server/pb/common";
+
+package common;
+
+message Status {
+  string code = 1;
+  string message = 2;
+}
+
+message ErrorResponse {
+  Status status = 1 [json_name = "status"];
+}
