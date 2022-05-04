@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  normal_app:
+    build:
+      context: ./src
+    environment:
+      APP_TYPE: "normal"
+    depends_on:
+      blocking_app:
+        condition: service_started
+
+  blocking_app:
+    build:
+      context: ./src
+    environment:
+      APP_TYPE: "blocking"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    build:
+      context: ./mysql
+    ports:
+      - "3306:3306"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "testdb"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "pass"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--protocol=tcp"]
+      timeout: 10s
+      interval: 1s
+      retries: 20
