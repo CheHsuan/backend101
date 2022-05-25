@@ -74,7 +74,7 @@ Auth->>MySQL: verify user and password
 Note over Auth: generate JWT token with private key
 Auth-->>User: JWT token
 User->>Service: query with JWT token
-Service->>Auth: query JKWS API
+Service->>Auth: query JWKS API
 Auth-->>Service: public key
 Note over Service: verify JWT token with public key
 Note over Service: keep th public key in local cache
