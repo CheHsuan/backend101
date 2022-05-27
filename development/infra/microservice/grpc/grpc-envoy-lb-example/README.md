@@ -85,5 +85,6 @@ map[3108326a-83e1-498b-bb6c-cc1da017e484:33 44775c38-d7e8-4f84-8818-59f0f856b77a
 ## 參考
 
 1. [k8s service](https://kubernetes.io/docs/concepts/services-networking/service)
-2. [矽谷牛的耕田筆記](https://telegra.ph/Envoy-as-a-gRPC-Load-Balancer-in-Kubernetes-09-30)
-3. [小信豬的原始部落](https://godleon.github.io/blog/Kubernetes/k8s-Service-Overview/)
+2. [envoy service discovery](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/service_discovery)
+3. [矽谷牛的耕田筆記](https://telegra.ph/Envoy-as-a-gRPC-Load-Balancer-in-Kubernetes-09-30)
+4. [小信豬的原始部落](https://godleon.github.io/blog/Kubernetes/k8s-Service-Overview/)
