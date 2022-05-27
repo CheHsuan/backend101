@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: envoy
+  name: envoy
+spec:
+  ports:
+    - name: http
+      port: 10000
+      protocol: TCP
+      targetPort: http
+    - name: envoy-admin
+      port: 19000
+      protocol: TCP
+      targetPort: envoy-admin
+  selector:
+    app: envoy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: envoy
+  name: envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy
+  template:
+    metadata:
+      labels:
+        app: envoy
+    spec:
+      containers:
+        - name: envoy
+          image: envoyproxy/envoy:v1.21-latest
+          command: ["/usr/local/bin/envoy", "-c", "/var/lib/envoy/envoy.yaml"]
+          volumeMounts:
+            - name: config
+              mountPath: /var/lib/envoy
+          ports:
+            - containerPort: 10000
+              name: http
+              protocol: TCP
+            - containerPort: 19000
+              name: envoy-admin
+              protocol: TCP
+      volumes:
+        - name: config
+          configMap:
+            name: envoy-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: server
+  name: server
+spec:
+  clusterIP: None # try remove it
+  ports:
+    - name: grpc
+      port: 8080
+      protocol: TCP
+      targetPort: grpc
+  selector:
+    app: server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: server
+  name: server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - name: main
+          image: rche/grpc-greeter 
+          ports:
+            - containerPort: 8080
+              name: grpc
+              protocol: TCP

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "grpc-envoy-lb/pb";
+
+package greeter;
+
+service Greeter {
+  rpc Greet (GreetRequest) returns (GreetResponse) {}
+}
+
+message GreetRequest {
+}
+
+message GreetResponse {
+  string message = 1;
+}

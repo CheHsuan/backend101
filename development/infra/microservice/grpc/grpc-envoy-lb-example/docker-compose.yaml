@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  proxy:
+    image: envoyproxy/envoy:v1.21-latest
+    depends_on:
+      - server
+    ports:
+      - 10000:10000
+      - 19000:19000
+    volumes:
+      - ./envoy:/var/lib/envoy:ro
+    command:
+      - /usr/local/bin/envoy
+      - -c
+      - /var/lib/envoy/envoy.yaml
+      - -l
+      - debug
+
+  server:
+    build:
+      context: ./server
+    scale: 3
