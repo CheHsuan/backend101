@@ -12,7 +12,7 @@ GRPC基於HTTP2的協定下，是不像HTTP1那麼容易做到負載平衡，畢
 
 **envoy設定**
 
-很重要的地方是在設定envoy的service discovery時，我們採用了STRICT DNS策略，該策略是持續的解析目標domain name，並將所有的dns查詢到的IP作為上游集群中可用的host，在後續的request分發中會使用這些IP來做負載平衡，如採用Round robin或是Least Request等策略。
+很重要的地方是在設定envoy的service discovery時，我們採用了STRICT DNS策略，該策略是持續的解析目標domain name，並將所有的dns查詢到的IP作為上游集群中可用的host，在後續的request分發中會使用這些IP來做負載平衡，如採用Round robin或是Least Request等[策略](https://cloudnative.to/envoy/api-v2/api/v2/cluster.proto.html?highlight=round_robin#enum-cluster-lbpolicy)。
 
 ## 架構
 
