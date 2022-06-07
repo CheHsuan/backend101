@@ -3,15 +3,13 @@
 ###### tags: `Golang`
 
 ## 預備知識
-``` markmap
-# Buzzword
-## 單/多核心 與 單/多工
-## kernel space 和 user space
-## kernel mode 和 user mode
-## process 和 thread
-## kernel thread 和 user thread
-## threading model
-```
+* 單/多核心 與 單/多工
+* kernel space 和 user space
+* kernel mode 和 user mode
+* process 和 thread
+* kernel thread 和 user thread
+* threading model
+
 
 ### 單/多核心與單/多工
 #### 單核心單工
@@ -138,106 +136,23 @@ gantt
 
 #### One-to-one
 每建立一個user-level thread也會跟著生成kernel-level thread並且將之綁定。
-<img src='https://g.gravizo.com/svg?
- digraph G {
-   main -> parse -> execute;
-   main -> init;
-   main -> cleanup;
-   execute -> make_string;
-   execute -> printf
-   init -> make_string;
-   main -> printf;
-   execute -> compare;
- }
-'/>
-``` graphviz
-digraph one2one {
-        subgraph cluster_level1{
-            label ="Kernel space";
-            kernel_thread1 [label="Thread1" shape=circle];
-            kernel_thread2 [label="Thread2" shape=circle];
-            kernel_thread3 [label="Thread3" shape=circle];
-        }
-        subgraph cluster_level2{
-            label ="User space";
-            thread1 [label="Thread 1" shape=circle];
-            thread2 [label="Thread 2" shape=circle];
-            thread3 [label="Thread 3" shape=circle];
-        }
-        thread1 -> kernel_thread1
-        thread2 -> kernel_thread2
-        thread3 -> kernel_thread3
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20one2one%20%7B%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level1%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22Kernel%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread1%20%5Blabel%3D%22Thread1%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread2%20%5Blabel%3D%22Thread2%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread3%20%5Blabel%3D%22Thread3%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level2%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22User%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread1%20%5Blabel%3D%22Thread%201%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread2%20%5Blabel%3D%22Thread%202%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread3%20%5Blabel%3D%22Thread%203%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20thread1%20-%3E%20kernel_thread1%0A%20%20%20%20%20%20%20%20thread2%20-%3E%20kernel_thread2%0A%20%20%20%20%20%20%20%20thread3%20-%3E%20kernel_thread3%0A%7D)
+
 #### Many-to-one
 多對一的方式進行綁定。
-``` graphviz
-digraph many2one {
-        subgraph cluster_level1{
-            label ="Kernel space";
-            kernel_thread [label="Thread" shape=circle];
-        }
-        subgraph cluster_level2{
-            label ="User space";
-            thread1 [label="Thread 1" shape=circle];
-            thread2 [label="Thread 2" shape=circle];
-            thread3 [label="Thread 3" shape=circle];
-        }
-        thread1 -> kernel_thread
-        thread2 -> kernel_thread
-        thread3 -> kernel_thread
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20many2one%20%7B%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level1%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22Kernel%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread%20%5Blabel%3D%22Thread%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level2%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22User%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread1%20%5Blabel%3D%22Thread%201%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread2%20%5Blabel%3D%22Thread%202%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread3%20%5Blabel%3D%22Thread%203%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20thread1%20-%3E%20kernel_thread%3B%0A%20%20%20%20%20%20%20%20thread2%20-%3E%20kernel_thread%3B%0A%20%20%20%20%20%20%20%20thread3%20-%3E%20kernel_thread%3B%0A%7D)
+
 #### Many-to-many
 user-level thread可以任意分配到kernel-level thread上執行。
-``` graphviz
-digraph many2many {
-        subgraph cluster_level1{
-            label ="Kernel space";
-            kernel_thread1 [label="Thread 1" shape=circle];
-            kernel_thread2 [label="Thread 2" shape=circle];
-        }
-        subgraph cluster_level2{
-            label ="User space";
-            thread1 [label="Thread 1" shape=circle];
-            thread2 [label="Thread 2" shape=circle];
-            thread3 [label="Thread 3" shape=circle];
-        }
-        thread1 -> kernel_thread1
-        thread2 -> kernel_thread1
-        thread3 -> kernel_thread1
-        thread1 -> kernel_thread2
-        thread2 -> kernel_thread2
-        thread3 -> kernel_thread2   
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20many2many%20%7B%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level1%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22Kernel%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread1%20%5Blabel%3D%22Thread%201%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread2%20%5Blabel%3D%22Thread%202%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level2%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22User%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread1%20%5Blabel%3D%22Thread%201%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread2%20%5Blabel%3D%22Thread%202%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread3%20%5Blabel%3D%22Thread%203%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20thread1%20-%3E%20kernel_thread1%3B%0A%20%20%20%20%20%20%20%20thread2%20-%3E%20kernel_thread1%3B%0A%20%20%20%20%20%20%20%20thread3%20-%3E%20kernel_thread1%3B%0A%20%20%20%20%20%20%20%20thread1%20-%3E%20kernel_thread2%3B%0A%20%20%20%20%20%20%20%20thread2%20-%3E%20kernel_thread2%3B%0A%20%20%20%20%20%20%20%20thread3%20-%3E%20kernel_thread2%3B%0A%7D)
+
 #### Two-level
 與many-to-many相似，但可以允許指定做one-to-one
-``` graphviz
-digraph many2many {
-        subgraph cluster_level1{
-            label ="Kernel space";
-            kernel_thread1 [label="Thread 1" shape=circle];
-            kernel_thread2 [label="Thread 2" shape=circle];
-            kernel_thread3 [label="Thread 3" shape=circle];
-        }
-        subgraph cluster_level2{
-            label ="User space";
-            thread1 [label="Thread 1" shape=circle];
-            thread2 [label="Thread 2" shape=circle];
-            thread3 [label="Thread 3" shape=circle];
-            thread4 [label="Thread 4" shape=circle];
 
-        }
-        thread1 -> kernel_thread1
-        thread2 -> kernel_thread1
-        thread3 -> kernel_thread1
-        thread1 -> kernel_thread2
-        thread2 -> kernel_thread2
-        thread3 -> kernel_thread2
-        thread4 -> kernel_thread3
-}
-```
+![Alt text](https://g.gravizo.com/svg?digraph%20many2many%20%7B%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level1%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22Kernel%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread1%20%5Blabel%3D%22Thread%201%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread2%20%5Blabel%3D%22Thread%202%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20kernel_thread3%20%5Blabel%3D%22Thread%203%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20subgraph%20cluster_level2%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20label%20%3D%22User%20space%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread1%20%5Blabel%3D%22Thread%201%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread2%20%5Blabel%3D%22Thread%202%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread3%20%5Blabel%3D%22Thread%203%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20thread4%20%5Blabel%3D%22Thread%204%22%20shape%3Dcircle%5D%3B%0A%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20thread1%20-%3E%20kernel_thread1%3B%0A%20%20%20%20%20%20%20%20thread2%20-%3E%20kernel_thread1%3B%0A%20%20%20%20%20%20%20%20thread3%20-%3E%20kernel_thread1%3B%0A%20%20%20%20%20%20%20%20thread1%20-%3E%20kernel_thread2%3B%0A%20%20%20%20%20%20%20%20thread2%20-%3E%20kernel_thread2%3B%0A%20%20%20%20%20%20%20%20thread3%20-%3E%20kernel_thread2%3B%0A%20%20%20%20%20%20%20%20thread4%20-%3E%20kernel_thread3%3B%0A%7D)
 
 ## 正題
 ### Goroutine
@@ -263,46 +178,8 @@ Processor，是一個邏輯上意義的處理器，不代表真實的CPU core數
 Local Run Queue, 用來放置G，每個P都會擁有自己的LRQ。
 #### GRQ
 Global Run Queue，也是用來放置G，當有些LRQ滿了之後，無法塞進更多G時，就會把G到GRQ裡面。
-``` graphviz
-digraph GMP {
-	node[shape=record]
-    rankdir=TB;
-    
-    GRQ [label="{ GRQ |{<Head>G|G|G|G|<Tail>}}"];
-    
-    new [label="go\ func()" shape=none];
-    newG [label="G'" shape=circle];
-    new -> newG [label="new"];
-    newG -> P1:Tail [label="push"]; 
-    
-    P1 [label="<P> P |  { LRQ |{||||<Tail>}}"];
-    M1 [label="M" shape=triangle];
-    P1:P -> M1 [label="attach"];
-    RunG [label="G" shape=circle];
-    RunG -> M1 [label="run on"];
-    RunG -> new;
-    
-    GRQ ->P1:Tail [label="pull & push"];
-    
-    P2 [label="<P>P | { LRQ |{<Head>G|G|G|G|G}}"];
-    M2 [label="M" shape=triangle];
-    P2:P -> M2;
-    P2:Head->M2 [label="pull"];
-    
-    Scheduler [label="OS Scheduler"];
-    M1 -> Scheduler;
-    M2 -> Scheduler [label="managed by"];
-    
-    Core1 [label="Core" shape=hexagon];
-    Core2 [label="Core" shape=hexagon];
-    Core3 [label="Core" shape=hexagon];
-    Core4 [label="Core" shape=hexagon];
-    Scheduler -> Core1;
-    Scheduler -> Core2;
-    Scheduler -> Core3;
-    Scheduler -> Core4;
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20GMP%20%7B%0A%09node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20%5Blabel%3D%22%7B%20GRQ%20%7C%7B%3CHead%3EG%7CG%7CG%7CG%7C%3CTail%3E%7D%7D%22%5D%3B%0A%20%20%20%20%0A%20%20%20%20new%20%5Blabel%3D%22go%5C%20func%28%29%22%20shape%3Dnone%5D%3B%0A%20%20%20%20newG%20%5Blabel%3D%22G%27%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20new%20-%3E%20newG%20%5Blabel%3D%22new%22%5D%3B%0A%20%20%20%20newG%20-%3E%20P1%3ATail%20%5Blabel%3D%22push%22%5D%3B%20%0A%20%20%20%20%0A%20%20%20%20P1%20%5Blabel%3D%22%3CP%3E%20P%20%7C%20%20%7B%20LRQ%20%7C%7B%7C%7C%7C%7C%3CTail%3E%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P1%3AP%20-%3E%20M1%20%5Blabel%3D%22attach%22%5D%3B%0A%20%20%20%20RunG%20%5Blabel%3D%22G%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20RunG%20-%3E%20M1%20%5Blabel%3D%22run%20on%22%5D%3B%0A%20%20%20%20RunG%20-%3E%20new%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20-%3EP1%3ATail%20%5Blabel%3D%22pull%20%26%20push%22%5D%3B%0A%20%20%20%20%0A%20%20%20%20P2%20%5Blabel%3D%22%3CP%3EP%20%7C%20%7B%20LRQ%20%7C%7B%3CHead%3EG%7CG%7CG%7CG%7CG%7D%7D%22%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P2%3AP%20-%3E%20M2%3B%0A%20%20%20%20P2%3AHead-%3EM2%20%5Blabel%3D%22pull%22%5D%3B%0A%20%20%20%20%0A%20%20%20%20Scheduler%20%5Blabel%3D%22OS%20Scheduler%22%5D%3B%0A%20%20%20%20M1%20-%3E%20Scheduler%3B%0A%20%20%20%20M2%20-%3E%20Scheduler%20%5Blabel%3D%22managed%20by%22%5D%3B%0A%20%20%20%20%0A%20%20%20%20Core1%20%5Blabel%3D%22Core%22%20shape%3Dhexagon%5D%3B%0A%20%20%20%20Core2%20%5Blabel%3D%22Core%22%20shape%3Dhexagon%5D%3B%0A%20%20%20%20Core3%20%5Blabel%3D%22Core%22%20shape%3Dhexagon%5D%3B%0A%20%20%20%20Core4%20%5Blabel%3D%22Core%22%20shape%3Dhexagon%5D%3B%0A%20%20%20%20Scheduler%20-%3E%20Core1%3B%0A%20%20%20%20Scheduler%20-%3E%20Core2%3B%0A%20%20%20%20Scheduler%20-%3E%20Core3%3B%0A%20%20%20%20Scheduler%20-%3E%20Core4%3B%0A%7D)
 
 
 ### 運作機制
@@ -313,172 +190,38 @@ digraph GMP {
 
 #### Handover
 當G1正在M1上執行時，遇到了需要呼叫blocking system call時，為提高系統效能，Go scheduler會執行一種**Handover**的機制，如以下。 
-``` graphviz
-digraph Handover1 {
-	node[shape=record]
-    rankdir=TB;
- 
-    P [label="<P> P |  { LRQ |{G2|G3|G4|G5}}"];
-    M1 [label="M1" shape=triangle];
-    P:P -> M1 ;
-    G1 [label="G1" shape=circle];
-    G1 -> M1;
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20Handover1%20%7B%0A%09node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P%20%5Blabel%3D%22%3CP%3E%20P%20%7C%20%20%7B%20LRQ%20%7C%7BG2%7CG3%7CG4%7CG5%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P%3AP%20-%3E%20M1%20%3B%0A%20%20%20%20G1%20%5Blabel%3D%22G1%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G1%20-%3E%20M1%3B%0A%7D)
+
 這時G1想要呼叫blocking system call，這時會將M1和P解除關聯，並取得一個新的M(M2)來和原P進行關聯，並繼續執行LRQ內的G2。而M1則是持續負責G1的執行。
-``` graphviz
-digraph Handover2 {
-	node[shape=record]
-    rankdir=TB;
- 
-    P [label="<P> P |  { LRQ |{G3|G4|G5|}}"];
-    M1 [label="M1" shape=triangle];
-    M2 [label="M2" shape=triangle];
-    P:P -> M2 ;
-    G2 -> M2;
-    G1 [label="G1" shape=circle];
-    G1 -> M1;
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20Handover2%20%7B%0A%09node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P%20%5Blabel%3D%22%3CP%3E%20P%20%7C%20%20%7B%20LRQ%20%7C%7BG3%7CG4%7CG5%7C%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20G2%20-%3E%20M2%3B%0A%20%20%20%20G1%20%5Blabel%3D%22G1%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G1%20-%3E%20M1%3B%0A%7D)
+
 當G1執行system call完畢後，會被塞回LRQ，而M1則變成閒置狀態，並等待之後使用。
-``` graphviz
-digraph Handover2 {
-	node[shape=record]
-    rankdir=TB;
- 
-    P [label="<P> P |  { LRQ |{G3|G4|G5|G1}}"];
-    M1 [label="M1" shape=triangle];
-    M2 [label="M2" shape=triangle];
-    P:P -> M2 ;
-    G2 -> M2;
-}
-```
+![Alt text](https://g.gravizo.com/svg?digraph%20Handover2%20%7B%0A%09node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P%20%5Blabel%3D%22%3CP%3E%20P%20%7C%20%20%7B%20LRQ%20%7C%7BG3%7CG4%7CG5%7CG1%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20G2%20-%3E%20M2%3B%0A%7D)
 
 #### Work stealing
 如果有個P的LRQ已經空了，且M也沒有正在執行的G，那這個M因為進入到閒置狀態很有可能被OS scheduler context switch掉，即使這個process中還有其他待執行的G。為了避免上述的情況發生，這時Go scheduler會執行work stealing，從其他的P LRQ中或是GRQ中偷G。
 
 一開始執行狀態如下圖。
 
-``` graphviz
-digraph workstealing1 {
-    node[shape=record]
-    rankdir=TB;
- 
-    P1 [label="<P> P1 |  { LRQ |{G3|G5|G7}}"];
-    M1 [label="M1" shape=triangle];
-    P1:P -> M1 ;
-    G1 [label="G1" shape=circle];
-    G1 -> M1;
-    
-    P2 [label="<P> P2 |  { LRQ |{G4|G6|G8}}"];
-    M2 [label="M2" shape=triangle];
-    P2:P -> M2 ;
-    G2 [label="G2" shape=circle];
-    G2 -> M2;
-    
-    GRQ [label="{ GRQ |{G9||}}"];
-}
-```
+![Alt text](https://g.gravizo.com/svg?digraph%20workstealing1%20%7B%0A%20%20%20%20node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P1%20%5Blabel%3D%22%3CP%3E%20P1%20%7C%20%20%7B%20LRQ%20%7C%7BG3%7CG5%7CG7%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P1%3AP%20-%3E%20M1%20%3B%0A%20%20%20%20G1%20%5Blabel%3D%22G1%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G1%20-%3E%20M1%3B%0A%20%20%20%20%0A%20%20%20%20P2%20%5Blabel%3D%22%3CP%3E%20P2%20%7C%20%20%7B%20LRQ%20%7C%7BG4%7CG6%7CG8%7D%7D%22%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P2%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20G2%20%5Blabel%3D%22G2%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G2%20-%3E%20M2%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20%5Blabel%3D%22%7B%20GRQ%20%7C%7BG9%7C%7C%7D%7D%22%5D%3B%0A%7D)
+
 而當M1及其對應的P1 LRQ為空時。
-``` graphviz
-digraph workstealing1 {
-    node[shape=record]
-    rankdir=TB;
- 
-    P1 [label="<P> P1 |  { LRQ |{||}}"];
-    M1 [label="M1" shape=triangle];
-    P1:P -> M1 ;
-    
-    P2 [label="<P> P2 |  { LRQ |{G4|G6|G8}}"];
-    M2 [label="M2" shape=triangle];
-    P2:P -> M2 ;
-    G2 [label="G2" shape=circle];
-    G2 -> M2;
-    
-    GRQ [label="{ GRQ |{G9||}}"];
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20workstealing1%20%7B%0A%20%20%20%20node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P1%20%5Blabel%3D%22%3CP%3E%20P1%20%7C%20%20%7B%20LRQ%20%7C%7B%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P1%3AP%20-%3E%20M1%20%3B%0A%20%20%20%20%0A%20%20%20%20P2%20%5Blabel%3D%22%3CP%3E%20P2%20%7C%20%20%7B%20LRQ%20%7C%7BG4%7CG6%7CG8%7D%7D%22%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P2%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20G2%20%5Blabel%3D%22G2%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G2%20-%3E%20M2%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20%5Blabel%3D%22%7B%20GRQ%20%7C%7BG9%7C%7C%7D%7D%22%5D%3B%0A%7D)
+
 P1嘗試從P2的LRQ偷一半的G，結果如下。
-``` graphviz
-digraph workstealing1 {
-    node[shape=record]
-    rankdir=TB;
- 
-    P1 [label="<P> P1 |  { LRQ |{G6||}}"];
-    M1 [label="M1" shape=triangle];
-    P1:P -> M1 ;
-    G4 [label="G4" shape=circle];
-    G4 -> M1;
-    
-    P2 [label="<P> P2 |  { LRQ |{G8||}}"];
-    M2 [label="M2" shape=triangle];
-    P2:P -> M2 ;
-    G2 [label="G2" shape=circle];
-    G2 -> M2;
-    
-    GRQ [label="{ GRQ |{G9||}}"];
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20workstealing1%20%7B%0A%20%20%20%20node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P1%20%5Blabel%3D%22%3CP%3E%20P1%20%7C%20%20%7B%20LRQ%20%7C%7BG6%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P1%3AP%20-%3E%20M1%20%3B%0A%20%20%20%20G4%20%5Blabel%3D%22G4%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G4%20-%3E%20M1%3B%0A%20%20%20%20%0A%20%20%20%20P2%20%5Blabel%3D%22%3CP%3E%20P2%20%7C%20%20%7B%20LRQ%20%7C%7BG8%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P2%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20G2%20%5Blabel%3D%22G2%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G2%20-%3E%20M2%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20%5Blabel%3D%22%7B%20GRQ%20%7C%7BG9%7C%7C%7D%7D%22%5D%3B%0A%7D)
+
 而當M2把P2的G都執行完畢時，且這時候P1的LRQ也空了。
-``` graphviz
-digraph workstealing1 {
-    node[shape=record]
-    rankdir=TB;
- 
-    P1 [label="<P> P1 |  { LRQ |{||}}"];
-    M1 [label="M1" shape=triangle];
-    P1:P -> M1 ;
-    G6 [label="G6" shape=circle];
-    G6 -> M1;
-    
-    P2 [label="<P> P2 |  { LRQ |{||}}"];
-    M2 [label="M2" shape=triangle];
-    P2:P -> M2 ;
-    
-    GRQ [label="{ GRQ |{G9||}}"];
-}
-```
+
+![Alt text](https://g.gravizo.com/svg?digraph%20workstealing1%20%7B%0A%20%20%20%20node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P1%20%5Blabel%3D%22%3CP%3E%20P1%20%7C%20%20%7B%20LRQ%20%7C%7B%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P1%3AP%20-%3E%20M1%20%3B%0A%20%20%20%20G6%20%5Blabel%3D%22G6%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G6%20-%3E%20M1%3B%0A%20%20%20%20%0A%20%20%20%20P2%20%5Blabel%3D%22%3CP%3E%20P2%20%7C%20%20%7B%20LRQ%20%7C%7B%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P2%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20%5Blabel%3D%22%7B%20GRQ%20%7C%7BG9%7C%7C%7D%7D%22%5D%3B%0A%7D%0A%60%60%60)
+
 P2這時候會嘗試從GRQ偷，如下。
-``` graphviz
-digraph workstealing1 {
-    node[shape=record]
-    rankdir=TB;
- 
-    P1 [label="<P> P1 |  { LRQ |{||}}"];
-    M1 [label="M1" shape=triangle];
-    P1:P -> M1 ;
-    G6 [label="G6" shape=circle];
-    G6 -> M1;
-    
-    P2 [label="<P> P2 |  { LRQ |{||}}"];
-    M2 [label="M2" shape=triangle];
-    P2:P -> M2 ;
-    G9 [label="G9" shape=circle];
-    G9 -> M1;
-    
-    GRQ [label="{ GRQ |{||}}"];
-}
-```
-<details> 
-<summary></summary>
-custom_mark10
-  digraph G {
-    size ="4,4"
-    main [shape=box]
-    main -> parse [weight=8]
-    parse -> execute
-    main -> init [style=dotted]
-    main -> cleanup
-    execute -> { make_string; printf}
-    init -> make_string
-    edge [color=red]
-    main -> printf [style=bold,label="100 times"]
-    make_string [label="make a string"]
-    node [shape=box,style=filled,color=".7 .3 1.0"]
-    execute -> compare
-  }
-custom_mark10
-</details>
+
+![Alt text](https://g.gravizo.com/svg?digraph%20workstealing1%20%7B%0A%20%20%20%20node%5Bshape%3Drecord%5D%0A%20%20%20%20rankdir%3DTB%3B%0A%20%0A%20%20%20%20P1%20%5Blabel%3D%22%3CP%3E%20P1%20%7C%20%20%7B%20LRQ%20%7C%7B%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M1%20%5Blabel%3D%22M1%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P1%3AP%20-%3E%20M1%20%3B%0A%20%20%20%20G6%20%5Blabel%3D%22G6%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G6%20-%3E%20M1%3B%0A%20%20%20%20%0A%20%20%20%20P2%20%5Blabel%3D%22%3CP%3E%20P2%20%7C%20%20%7B%20LRQ%20%7C%7B%7C%7C%7D%7D%22%5D%3B%0A%20%20%20%20M2%20%5Blabel%3D%22M2%22%20shape%3Dtriangle%5D%3B%0A%20%20%20%20P2%3AP%20-%3E%20M2%20%3B%0A%20%20%20%20G9%20%5Blabel%3D%22G9%22%20shape%3Dcircle%5D%3B%0A%20%20%20%20G9%20-%3E%20M1%3B%0A%20%20%20%20%0A%20%20%20%20GRQ%20%5Blabel%3D%22%7B%20GRQ%20%7C%7B%7C%7C%7D%7D%22%5D%3B%0A%7D)
 
 
 ## Reference
