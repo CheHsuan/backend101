@@ -1,7 +1,7 @@
 .PHONY: static clean
 
 static:
-	markdown-tree --input-dir ../backend101 --output-file tree.md
+	markdown-tree --input-dir ../backend101 --output-file tree.md --with-link
 	npx markmap-cli --no-open -o static/index.html tree.md
 
 clean:
